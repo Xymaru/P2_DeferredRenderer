@@ -5,13 +5,13 @@ IncludeDir["assimp"]	= "%{VendorDir}/assimp/include/assimp/"
 IncludeDir["fmt"]		= "%{VendorDir}/fmt/"
 IncludeDir["glad"]		= "%{VendorDir}/glad/include/"
 IncludeDir["glfw"]		= "%{VendorDir}/glfw/include/"
-IncludeDir["glm"]		= "%{VendorDir}/include/glm/include/"
+IncludeDir["glm"]		= "%{VendorDir}/glm/include/"
 IncludeDir["imgui"] 	= "%{VendorDir}/imgui-docking/"
 IncludeDir["rapidjson"] = "%{VendorDir}/rapidjson/"
 IncludeDir["stb"]		= "%{VendorDir}/stb/"
 
 LibraryDir={}
-LibraryDir["assimp"]	= "%{VendorDir}/assimp/lib/windows/assimp"
+LibraryDir["assimp"]	= "%{VendorDir}/assimp/lib/windows"
 LibraryDir["glfw"]		= "%{VendorDir}/glfw/lib-vc2019"
 
 Library={}

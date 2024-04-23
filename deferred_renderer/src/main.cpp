@@ -1,14 +1,19 @@
 #include <iostream>
 
-#include <GLFW/glfw3.h>
+#include <P2/Application.h>
 
 int main(int argc, char** argv) {
+	Application app;
 
-	if (!glfwInit()) {
+	Application::SetApplication(&app);
 
+	if (!app.Init()) {
+		return -1;
 	}
 
+	app.Run();
 
+	app.Cleanup();
 
 	return 0;
 }

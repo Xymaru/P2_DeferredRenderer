@@ -8,10 +8,10 @@ namespace EM::Debug
 {
 	enum LogSeverity : unsigned char
 	{
-		INFO	= BIT(0),
-		WARNING = BIT(1),
-		ERROR	= BIT(2),
-		MAX		= BIT(3)
+		LS_INFO,
+		LS_WARNING,
+		LS_ERROR,
+		LS_MAX
 	};
 
 	inline LogSeverity operator|(LogSeverity a, LogSeverity b)

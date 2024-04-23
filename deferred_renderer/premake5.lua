@@ -24,7 +24,6 @@ project "deferred_renderer"
 	
     links
     {
-      "ImGui",
       "%{Library.opengl}",
 	  "%{Library.assimp}",
 	  "%{Library.glfw}"

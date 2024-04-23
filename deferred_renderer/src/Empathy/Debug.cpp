@@ -30,10 +30,10 @@ namespace EM::Debug
 			{
 				if(DumpLog)
 				{
-					if(!FileSystem::Exists("Logs"))
-						FileSystem::CreateDir("Logs");
+					if(!FileSystem::Exists("logs"))
+						FileSystem::CreateDir("logs");
 
-					EM::File dumpLog = FileSystem::OpenO("Logs/log-dump.txt");
+					EM::File dumpLog = FileSystem::OpenO("logs/log-dump.txt");
 					for(const auto& log : Logs)
 					{
 						dumpLog.Write(log.data(), log.size());
@@ -64,33 +64,51 @@ namespace EM::Debug
 	{
 		std::stringstream buffer;
 		buffer << "[Info] " << title << " - " << message << std::endl;
-		LogMessage log { buffer.str(), INFO };
+		LogMessage log { buffer.str(), LS_INFO };
 		LastLog = buffer.str();
 
 		Messages.emplace_back(log);
 		Logs.emplace_back(buffer.str());
+
+#ifndef EM_DIST
+		std::cout << "\x1B[32m";
+		std::cout << LastLog;
+		std::cout << "\033[0m";
+#endif
 	}
 
 	void LogWarning(const std::string& title, const std::string& message)
 	{
 		std::stringstream buffer;
 		buffer << "[Warning] " << title << " - " << message << std::endl;
-		LogMessage log { buffer.str(), WARNING };
+		LogMessage log { buffer.str(), LS_WARNING };
 		LastLog = buffer.str();
 
 		Messages.emplace_back(log);
 		Logs.emplace_back(buffer.str());
+
+#ifndef EM_DIST
+		std::cout << "\x1B[33m";
+		std::cout << LastLog;
+		std::cout << "\033[0m";
+#endif
 	}
 
 	void LogError(const std::string& title, const std::string& message)
 	{
 		std::stringstream buffer;
 		buffer << "[Error] " << title << " - " << message << std::endl;
-		LogMessage log { buffer.str(), ERROR };
+		LogMessage log { buffer.str(), LS_ERROR };
 		LastLog = buffer.str();
 		
 		Messages.emplace_back(log);
 		Logs.emplace_back(buffer.str());
+
+#ifndef EM_DIST
+		std::cout << "\x1B[31m";
+		std::cout << LastLog;
+		std::cout << "\033[0m";
+#endif
 	}
 
 	const std::vector<LogMessage>& GetLogs()
