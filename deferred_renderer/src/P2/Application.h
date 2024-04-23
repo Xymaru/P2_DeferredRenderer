@@ -9,10 +9,6 @@
 
 class Application {
 private:
-    // Loop
-    f32  deltaTime;
-    bool isRunning;
-
     Window m_Window;
 
     static Application* s_Instance;

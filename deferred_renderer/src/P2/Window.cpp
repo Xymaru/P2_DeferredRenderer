@@ -40,3 +40,8 @@ bool Window::Init()
 
 	return true;
 }
+
+void Window::Update()
+{
+	glfwSwapBuffers(m_WindowHandle);
+}

@@ -9,5 +9,7 @@ public:
 
 	bool Init();
 
+	void Update();
+
 	struct GLFWwindow* GetHandle() { return m_WindowHandle; }
 };

@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include <Empathy/Debug.h>
+
 Application* Application::s_Instance = nullptr;
 
 bool Application::Init()
@@ -18,7 +20,13 @@ bool Application::Init()
 void Application::Run()
 {
     while (!Input::Quit()) {
+        // Update input
         Input::Update();
+
+
+
+        // Update window buffer
+        m_Window.Update();
     }
 }
 
