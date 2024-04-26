@@ -1,8 +1,26 @@
 #include "Window.h"
-#include <GLFW/glfw3.h>
-#include <Empathy/Debug.h>
 
-Window::Window()
+#include <glad/glad.c>
+#include <GLFW/glfw3.h>
+
+#include <Empathy/Debug.h>
+#include <P2/Application.h>
+
+void Window::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	Application::GetInstance()->GetWindow()->m_WindowSize = { width, height };
+
+	
+}
+
+void Window::RendererDebugCallback(u32 src, u32 type, u32 id, u32 severity, i32 len, const char* msg, const void* uparam)
+{
+	EM_ERROR("OpenGL error: {}", msg);
+}
+
+Window::Window() :
+	m_WindowHandle(nullptr),
+	m_WindowSize({ 800, 600 })
 {
 }
 
@@ -12,13 +30,18 @@ Window::~Window()
 
 bool Window::Init()
 {
+	std::string error_msg = "Unknown";
 	const char** infoLog = NULL;
 	int error_no = 0;
 
 	if (!glfwInit()) {
 		error_no = glfwGetError(infoLog);
 
-		//EM_ERROR("glfwInit() failed with code [{0}] and error: [{1}]", error_no, *infoLog);
+		if (infoLog) {
+			error_msg = *infoLog;
+		}
+
+		EM_ERROR("glfwInit() failed with code [{0}] and error: [{1}]", error_no, error_msg.c_str());
 		return false;
 	}
 
@@ -27,21 +50,43 @@ bool Window::Init()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	m_WindowHandle = glfwCreateWindow(640, 480, "P2_DeferredRenderer", NULL, NULL);
+	m_WindowHandle = glfwCreateWindow(m_WindowSize.x, m_WindowSize.y, "P2_DeferredRenderer", NULL, NULL);
 
 	if (!m_WindowHandle) {
 		error_no = glfwGetError(infoLog);
 
-		//EM_ERROR("glfwInit() failed with code [{0}] and error: [{1}]", error_no, *infoLog);
+		if (infoLog) {
+			error_msg = *infoLog;
+		}
+
+		EM_ERROR("glfwCreateWindow() failed with code [{0}] and error: [{1}]", error_no, error_msg.c_str());
+
 		return false;
 	}
+
+	glfwMakeContextCurrent(m_WindowHandle);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		EM_ERROR("Failed to initialize glad.");
+		return false;
+	}
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(&Window::RendererDebugCallback, NULL);
+
+	glClearColor(.1f, .1f, .1f, 1.0f);
 
 	EM_INFO("Window module initialized");
 
 	return true;
 }
 
-void Window::Update()
+void Window::PreUpdate()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Window::PostUpdate()
 {
 	glfwSwapBuffers(m_WindowHandle);
 }

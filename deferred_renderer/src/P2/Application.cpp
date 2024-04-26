@@ -20,13 +20,16 @@ bool Application::Init()
 void Application::Run()
 {
     while (!Input::Quit()) {
+        // Clear window color
+        m_Window.PreUpdate();
+
         // Update input
         Input::Update();
 
 
 
         // Update window buffer
-        m_Window.Update();
+        m_Window.PostUpdate();
     }
 }
 

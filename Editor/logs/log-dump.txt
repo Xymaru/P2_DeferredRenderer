@@ -1,1 +1,2 @@
+[Error] Window::RendererDebugCallback - OpenGL error: GL_INVALID_OPERATION error generated. VAO names must be generated with glGenVertexArrays before they can be bound or used.
 [Info] Window::Init - Window module initialized
