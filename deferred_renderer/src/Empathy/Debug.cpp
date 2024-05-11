@@ -8,6 +8,8 @@
 #include "filesystem/FileSystem.h"
 #include "SimpleTypes.h"
 
+#include <Windows.h>
+
 namespace EM::Debug
 {
 	namespace 
@@ -22,9 +24,18 @@ namespace EM::Debug
 			u32 InfoCount = 0;
 			u32 WarningCount = 0;
 			u32 ErrorCount = 0;
+
+			CONSOLE_SCREEN_BUFFER_INFO ConsoleInfo;
+			HANDLE ConsoleHandle;
+
 			u32 TotalCount() const
 			{
 				return InfoCount + WarningCount + ErrorCount;
+			}
+
+			DebugStats() {
+				ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+				GetConsoleScreenBufferInfo(ConsoleHandle, &ConsoleInfo);
 			}
 			~DebugStats()
 			{
@@ -71,9 +82,9 @@ namespace EM::Debug
 		Logs.emplace_back(buffer.str());
 
 #ifndef EM_DIST
-		std::cout << "\x1B[32m";
+		SetConsoleTextAttribute(DebugStats.ConsoleHandle, FOREGROUND_GREEN);
 		std::cout << LastLog;
-		std::cout << "\033[0m";
+		SetConsoleTextAttribute(DebugStats.ConsoleHandle, DebugStats.ConsoleInfo.wAttributes);
 #endif
 	}
 
@@ -88,9 +99,9 @@ namespace EM::Debug
 		Logs.emplace_back(buffer.str());
 
 #ifndef EM_DIST
-		std::cout << "\x1B[33m";
+		SetConsoleTextAttribute(DebugStats.ConsoleHandle, FOREGROUND_GREEN|FOREGROUND_RED);
 		std::cout << LastLog;
-		std::cout << "\033[0m";
+		SetConsoleTextAttribute(DebugStats.ConsoleHandle, DebugStats.ConsoleInfo.wAttributes);
 #endif
 	}
 
@@ -105,9 +116,9 @@ namespace EM::Debug
 		Logs.emplace_back(buffer.str());
 
 #ifndef EM_DIST
-		std::cout << "\x1B[31m";
+		SetConsoleTextAttribute(DebugStats.ConsoleHandle, FOREGROUND_RED);
 		std::cout << LastLog;
-		std::cout << "\033[0m";
+		SetConsoleTextAttribute(DebugStats.ConsoleHandle, DebugStats.ConsoleInfo.wAttributes);
 #endif
 	}
 

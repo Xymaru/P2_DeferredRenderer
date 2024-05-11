@@ -9,24 +9,7 @@ namespace EM {
 	template<>
 	inline u32 Resources::Load<Image>(const char* file)
 	{
-		u32 resourceId = getResourcePosition(RT_IMAGE, file);
-
-		if (resourceId == EM_INVALID_RESOURCE) {
-			Image* image = new Image();
-
-			if (image->Load(file)) {
-				resourceId = push_resource(RT_IMAGE, image, file);
-
-				EM_INFO("Loaded image at path [{}]", file);
-			}
-			else {
-				EM_ERROR("Couldn't load image at path [{}]", file);
-
-				delete image;
-			}
-		}
-
-		return resourceId;
+		return loadResource_impl<Image, RT_IMAGE>(file);
 	}
 
 	template<>

@@ -117,6 +117,9 @@ namespace EM {
 		// Set current working directory
 		static void CurrentPath(const char* path);
 
+		// Returns the parent directory of a path or directory
+		static std::string GetParentDirectory(const char* path);
+
 		// Checks whether the given path refers to an empty file or directory
 		static bool IsEmpty(const char* path);
 

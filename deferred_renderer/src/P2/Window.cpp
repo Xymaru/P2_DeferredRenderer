@@ -8,14 +8,16 @@
 
 void Window::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-	Application::GetInstance()->GetWindow()->m_WindowSize = { width, height };
+	Application::GetInstance()->getWindow()->m_WindowSize = { width, height };
 
 	
 }
 
 void Window::RendererDebugCallback(u32 src, u32 type, u32 id, u32 severity, i32 len, const char* msg, const void* uparam)
 {
-	EM_ERROR("OpenGL error: {}", msg);
+	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) return;
+
+	EM_ERROR("OpenGL error: {} with param {}", msg, uparam);
 }
 
 Window::Window() :
@@ -72,7 +74,10 @@ bool Window::Init()
 	}
 
 	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(&Window::RendererDebugCallback, NULL);
+
+	glEnable(GL_DEPTH_TEST);
 
 	glClearColor(.1f, .1f, .1f, 1.0f);
 
@@ -83,10 +88,16 @@ bool Window::Init()
 
 void Window::PreUpdate()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::PostUpdate()
 {
 	glfwSwapBuffers(m_WindowHandle);
+}
+
+void Window::Cleanup()
+{
+	glfwDestroyWindow(m_WindowHandle);
+	glfwTerminate();
 }

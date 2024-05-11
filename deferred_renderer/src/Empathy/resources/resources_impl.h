@@ -23,6 +23,7 @@ namespace EM {
 		enum ResourceType {
 			RT_IMAGE,
 			RT_SHADER,
+			RT_MODEL,
 			RT_LAST
 		};
 
@@ -41,6 +42,31 @@ namespace EM {
 		static const char* getResourcePath_impl(ResourceType rt, ResourceId id);
 		static void* getResourceById_impl(ResourceType rt, ResourceId id);
 		static u32 push_resource(ResourceType rt, void* resource, const char* file);
+
+		template<class T, ResourceType I>
+		static ResourceId loadResource_impl(const char* file) {
+			u32 resourceId = getResourcePosition(I, file);
+
+			if (resourceId == EM_INVALID_RESOURCE) {
+				T* rsrc = new T();
+
+				if (rsrc->Load(file)) {
+					resourceId = push_resource(I, rsrc, file);
+
+					//EM_INFO("Loaded resource at path [{}]", file);
+					EM::Debug::Log("Resources::Load", EM_FMT("Loaded resource at path: {}", file));
+				}
+				else {
+					//EM_ERROR("Couldn't load resource at path [{}]", file);
+					EM::Debug::LogError("Resources::Load", EM_FMT("Couldn't load resource at path: {}", file));
+
+
+					delete rsrc;
+				}
+			}
+
+			return resourceId;
+		}
 	public:
 		template<class T> static ResourceId Load(const char* file);
 		template<class T> static T* GetResourceById(ResourceId id);

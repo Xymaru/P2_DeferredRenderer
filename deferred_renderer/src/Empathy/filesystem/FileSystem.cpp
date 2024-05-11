@@ -117,6 +117,13 @@ namespace EM {
 		std::filesystem::current_path(path);
 	}
 
+	std::string FileSystem::GetParentDirectory(const char* path)
+	{
+		std::filesystem::path p = path;
+
+		return p.parent_path().string();
+	}
+
 	bool FileSystem::IsEmpty(const char* path)
 	{
 		return std::filesystem::is_empty(path);
@@ -150,7 +157,7 @@ namespace EM {
 
 		size_t size = 0;
 
-		sbyte* memblock = NULL;
+		sbyte* memblock = nullptr;
 
 		if (f.is_open()) {
 			size = f.tellg();

@@ -20,6 +20,9 @@ public:
 	void PreUpdate();
 	void PostUpdate();
 
+	void Cleanup();
+
+	const char* getGLSLVersion() { return "#version 430"; }
 	struct GLFWwindow* GetHandle() { return m_WindowHandle; }
 	ivec2 GetWindowSize() { return m_WindowSize; }
 };

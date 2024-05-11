@@ -5,19 +5,21 @@ project "deferred_renderer"
     
     files
     {
-      "src/**.cpp",
-      "src/**.h" 
+		"src/**.h",
+		"src/**.cpp",
+		"vendor/imgui-docking/**.h",
+		"vendor/imgui-docking/**.cpp"
     }
 
     includedirs
     {
       "src",
+	  "vendor/imgui-docking",
 	  "%{IncludeDir.assimp}",
 	  "%{IncludeDir.fmt}",
 	  "%{IncludeDir.glad}",
 	  "%{IncludeDir.glfw}",
 	  "%{IncludeDir.glm}",
-	  "%{IncludeDir.imgui}",
 	  "%{IncludeDir.rapidjson}",
 	  "%{IncludeDir.stb}"
     }

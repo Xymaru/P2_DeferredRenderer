@@ -20,6 +20,8 @@ namespace EM {
 			delete[] m_MemoryBlock;
 		}
 
+		bool IsEmpty() { return m_MemoryBlock == nullptr; }
+
 		sbyte* getBlock() { return m_MemoryBlock; }
 
 		// De-allocs previous memory and allocs new memory with size
@@ -46,6 +48,6 @@ namespace EM {
 			m_PointIndex = index;
 		}
 
-		size_t Size() { return m_MemorySize; }
+		size_t size() { return m_MemorySize; }
 	};
 }

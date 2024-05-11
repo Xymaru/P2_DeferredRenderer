@@ -36,7 +36,7 @@ void Input::WindowCloseCallback(GLFWwindow* window)
 
 bool Input::Init()
 {
-	Window* window = Application::GetInstance()->GetWindow();
+	Window* window = Application::GetInstance()->getWindow();
 	GLFWwindow* whandle = window->GetHandle();
 
 	glfwSetKeyCallback(whandle, &Input::KeyCallback);
@@ -62,5 +62,6 @@ void Input::Update()
 
 void Input::Cleanup()
 {
-	delete[] m_KeyStates;
+	//delete[] m_KeyStates;
+	//delete[] m_MouseStates;
 }

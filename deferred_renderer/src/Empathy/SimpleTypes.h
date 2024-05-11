@@ -40,3 +40,5 @@ typedef glm::ivec4 ivec4;
 #ifndef NULL
 #define NULL 0
 #endif
+
+#define ARRAY_COUNT(x) (sizeof(x) / sizeof(x[0]))

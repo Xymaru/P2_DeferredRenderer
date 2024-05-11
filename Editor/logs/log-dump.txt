@@ -1,2 +1,7 @@
-[Error] Window::RendererDebugCallback - OpenGL error: GL_INVALID_OPERATION error generated. VAO names must be generated with glGenVertexArrays before they can be bound or used.
 [Info] Window::Init - Window module initialized
+[Info] ImGuiLayer::Init - ImGui successfully initialized!
+[Info] Resources::Load - Loaded resource at path: assets/patrick/Skin_Patrick.png
+[Info] Resources::Load - Loaded resource at path: assets/patrick/Flowers.png
+[Info] Resources::Load - Loaded resource at path: assets/patrick/Color.png
+[Info] Resources::Load - Loaded resource at path: assets/patrick/patrick.obj
+[Info] Resources::Load - Loaded resource at path: assets/shaders/texture_shader.glsl

@@ -1,12 +1,11 @@
 VendorDir = "../vendor";
 
 IncludeDir = {}
-IncludeDir["assimp"]	= "%{VendorDir}/assimp/include/assimp/"
+IncludeDir["assimp"]	= "%{VendorDir}/assimp/include/"
 IncludeDir["fmt"]		= "%{VendorDir}/fmt/"
 IncludeDir["glad"]		= "%{VendorDir}/glad/include/"
 IncludeDir["glfw"]		= "%{VendorDir}/glfw/include/"
 IncludeDir["glm"]		= "%{VendorDir}/glm/include/"
-IncludeDir["imgui"] 	= "%{VendorDir}/imgui-docking/"
 IncludeDir["rapidjson"] = "%{VendorDir}/rapidjson/"
 IncludeDir["stb"]		= "%{VendorDir}/stb/"
 
