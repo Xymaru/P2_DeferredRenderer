@@ -3,6 +3,7 @@
 #include <string>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 // Signed
 typedef signed __int8 i8;

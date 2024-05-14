@@ -10,6 +10,7 @@
 #include <Empathy/Debug.h>
 
 #include "panels/OpenGLStatsPanel.h"
+#include "panels/FrameBufferStats.h"
 
 ImGuiLayer::ImGuiLayer() : 
     m_Context(nullptr)
@@ -68,6 +69,7 @@ bool ImGuiLayer::Init()
 
     // Imgui panels
     m_Panels.push_back(new OpenGLStatsPanel());
+    m_Panels.push_back(new FrameBufferStats());
 
     return true;
 }

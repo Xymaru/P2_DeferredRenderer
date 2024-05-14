@@ -1,7 +1,10 @@
 [Info] Window::Init - Window module initialized
-[Info] ImGuiLayer::Init - ImGui successfully initialized!
+[Info] Framebuffer::checkStatus - Framebuffer completed!
+[Info] Resources::Load - Loaded resource at path: assets/shaders/screen_shader.glsl
 [Info] Resources::Load - Loaded resource at path: assets/patrick/Skin_Patrick.png
 [Info] Resources::Load - Loaded resource at path: assets/patrick/Flowers.png
 [Info] Resources::Load - Loaded resource at path: assets/patrick/Color.png
 [Info] Resources::Load - Loaded resource at path: assets/patrick/patrick.obj
 [Info] Resources::Load - Loaded resource at path: assets/shaders/texture_shader.glsl
+[Info] Resources::Load - Loaded resource at path: assets/shaders/color_shader.glsl
+[Info] ImGuiLayer::Init - ImGui successfully initialized!

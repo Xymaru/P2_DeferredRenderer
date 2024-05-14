@@ -5,21 +5,19 @@
 
 #include <glad/glad.h>
 
-#include "entity/MeshEntity.h"
+#include "scene/TestScene.h"
 
 Application* Application::s_Instance = nullptr;
 
 bool Application::Init()
 {
+    m_TargetResolution = { 1440, 810 };
+
     if (!m_Window.Init()) {
         return false;
     }
 
     if (!Input::Init()) {
-        return false;
-    }
-
-    if (!m_ImGuiLayer.Init()) {
         return false;
     }
 
@@ -35,9 +33,12 @@ bool Application::Init()
         m_OpenGLInfo.extensions[i] = (const char*)glGetStringi(GL_EXTENSIONS, (u32)i);
     }
 
-    entity = new MeshEntity();
+    m_TestScene = new TestScene();
+    m_TestScene->Init();
 
-    entity->Init();
+    if (!m_ImGuiLayer.Init()) {
+        return false;
+    }
 
     return true;
 }
@@ -54,9 +55,12 @@ void Application::Run()
         // Update imgui layer
         m_ImGuiLayer.PreUpdate();
 
+        //----- Update loop
+        m_TestScene->Update();
+
         //----- Render loop
 
-        entity->Render();
+        m_TestScene->Render();
 
         //-----------------
 
@@ -71,7 +75,7 @@ void Application::Run()
 
 void Application::Cleanup()
 {
-    delete entity;
+    delete m_TestScene;
 
     Input::Cleanup();
     m_ImGuiLayer.Cleanup();

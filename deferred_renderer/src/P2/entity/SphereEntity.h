@@ -1,25 +1,27 @@
 #pragma once
 
 #include "Entity.h"
+
 #include <Empathy/Resources.h>
+#include <vector>
 
-class MeshEntity : public Entity {
+class SphereEntity : public Entity {
 private:
-	EM::Model* m_Model;
+	std::vector<float> m_Vertices;
+	std::vector<u32> m_Indices;
 
-	EM::Shader* m_TextureShader;
+	u32 m_VAO;
 
-	EM::Uniform* m_TextureUniform;
+	EM::Shader* m_ColorShader;
 
 	EM::Uniform* m_ProjectionUniform;
 	EM::Uniform* m_ViewUniform;
 	EM::Uniform* m_ModelUniform;
 
-	EM::PointLightUniform m_PointLights[16];
-	EM::Uniform* m_PointLightCount;
+	void generateData();
 public:
-	MeshEntity();
-	~MeshEntity();
+	SphereEntity();
+	~SphereEntity();
 
 	void Init() override;
 	void Render(Camera* camera, const std::vector<Entity*>& point_lights) override;

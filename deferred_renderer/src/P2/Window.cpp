@@ -9,8 +9,6 @@
 void Window::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	Application::GetInstance()->getWindow()->m_WindowSize = { width, height };
-
-	
 }
 
 void Window::RendererDebugCallback(u32 src, u32 type, u32 id, u32 severity, i32 len, const char* msg, const void* uparam)
@@ -22,7 +20,7 @@ void Window::RendererDebugCallback(u32 src, u32 type, u32 id, u32 severity, i32 
 
 Window::Window() :
 	m_WindowHandle(nullptr),
-	m_WindowSize({ 800, 600 })
+	m_WindowSize({ 0, 0 })
 {
 }
 
@@ -32,6 +30,11 @@ Window::~Window()
 
 bool Window::Init()
 {
+	Application* app = Application::GetInstance();
+	ivec2 target_resolution = app->getTargetResolution();
+
+	m_WindowSize = target_resolution;
+
 	std::string error_msg = "Unknown";
 	const char** infoLog = NULL;
 	int error_no = 0;
@@ -51,6 +54,8 @@ bool Window::Init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	m_WindowHandle = glfwCreateWindow(m_WindowSize.x, m_WindowSize.y, "P2_DeferredRenderer", NULL, NULL);
 

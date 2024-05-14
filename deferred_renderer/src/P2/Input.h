@@ -20,6 +20,7 @@ enum MouseState {
 class Input {
 private:
     static ivec2 m_MousePosition;
+    static ivec2 m_RelativeMousePosition;
 
     static bool m_WindowQuit;
 
@@ -38,12 +39,18 @@ public:
     static bool IsKeyDown(KeyCode key) { return m_KeyStates[key] == KEY_DOWN; }
     static bool IsKeyUp(KeyCode key) { return m_KeyStates[key] == KEY_UP; }
 
-    static bool IsKeyPressed(KeyCode key) { return m_KeyStates[key] == KEY_PRESS; }
+    static bool IsKeyPressed(KeyCode key) { return m_KeyStates[key] == KEY_PRESS || m_KeyStates[key] == KEY_DOWN; }
 
     static bool IsMouseDown(int button) { return m_MouseStates[button] == MOUSE_DOWN; }
     static bool IsMouseUp(int button) { return m_MouseStates[button] == MOUSE_UP; }
 
+    static void MouseHideAndLock();
+    static void MouseShowAndUnlock();
+
     static ivec2 GetMousePosition() { return m_MousePosition; }
+    static ivec2 GetRelativeMousePosition() { return m_RelativeMousePosition; }
+
+    static ivec2 GetRelativeMousePositionNormalized();
 
     static bool Init();
 

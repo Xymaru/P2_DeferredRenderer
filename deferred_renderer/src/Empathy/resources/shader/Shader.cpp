@@ -11,7 +11,7 @@ namespace EM {
         i32 size;
         u32 type;
 
-        const i32 buf_size = 16;
+        const i32 buf_size = 64;
         char name[buf_size];
         i32 name_len;
 

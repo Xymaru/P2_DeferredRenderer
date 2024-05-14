@@ -8,7 +8,7 @@
 #include <P2/Window.h>
 #include <P2/imgui/ImGuiLayer.h>
 
-#include "entity/Entity.h"
+#include "scene/Scene.h"
 
 class Application {
 public:
@@ -26,7 +26,9 @@ private:
     ImGuiLayer m_ImGuiLayer;
     Window m_Window;
 
-    Entity* entity;
+    Scene* m_TestScene;
+
+    ivec2 m_TargetResolution;
 
     static Application* s_Instance;
 public:
@@ -36,9 +38,13 @@ public:
 
     void Cleanup();
 
+    Scene* getCurrentScene() { return m_TestScene; }
+
     Window* getWindow() { return &m_Window; }
 
     OpenGLInfo* getOpenGLInfo() { return &m_OpenGLInfo; }
+
+    ivec2 getTargetResolution() const { return m_TargetResolution; }
 
     static Application* GetInstance() { return s_Instance; }
 

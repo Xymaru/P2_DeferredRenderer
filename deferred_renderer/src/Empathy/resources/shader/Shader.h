@@ -21,6 +21,11 @@ namespace EM {
 		u32 location;
 	};
 
+	struct PointLightUniform {
+		Uniform* pos;
+		Uniform* color;
+	};
+
 	class Shader {
 	private:
 		std::vector<Uniform> m_Uniforms;
