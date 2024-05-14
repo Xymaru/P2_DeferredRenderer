@@ -17,7 +17,7 @@ private:
 
 	void checkStatus();
 public:
-	void Init(int width, int height);
+	virtual void Init(int width, int height);
 
 	void AddColorAttachment();
 

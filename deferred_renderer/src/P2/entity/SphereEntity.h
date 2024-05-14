@@ -24,5 +24,5 @@ public:
 	~SphereEntity();
 
 	void Init() override;
-	void Render(Camera* camera, const std::vector<Entity*>& point_lights) override;
+	void Render(Camera* camera) override;
 };

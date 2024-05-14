@@ -16,6 +16,12 @@ void FrameBufferStats::OnImGuiRender()
 	ImGui::Text("Albedo");
 	ImGui::Image((ImTextureID)m_CurrentScene->getAlbedoTexture(), texture_size, texture_uv2, texture_uv1);
 
+	ImGui::Text("Normals");
+	ImGui::Image((ImTextureID)m_CurrentScene->getNormalsTexture(), texture_size, texture_uv2, texture_uv1);
+
+	ImGui::Text("Position");
+	ImGui::Image((ImTextureID)m_CurrentScene->getPositionTexture(), texture_size, texture_uv2, texture_uv1);	
+
 	ImGui::Text("Depth");
 	ImGui::Image((ImTextureID)m_CurrentScene->getDepthTexture(), texture_size, texture_uv2, texture_uv1);
 }

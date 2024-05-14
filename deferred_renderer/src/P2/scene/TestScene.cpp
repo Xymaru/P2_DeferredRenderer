@@ -49,13 +49,24 @@ void TestScene::Init()
 		m_Entities.push_back(patrick);
 	}
 
+	vec3 light_positions[5] = {
+		vec3(2.0f, -2.0f, 2.0f),
+		vec3(-2.0f, 5.0f, 7.0f),
+		vec3(-6.0f, 8.0f, -5.0f),
+		vec3(-15.0f, 0.0f, 2.0f),
+		vec3(10.0f, 0.0f, -8.0f),
+	};
+
 	//------- Lights -------
-	PointLightEntity* point = new PointLightEntity();
-	point->Init();
-	point->setPosition(vec3(2.0f, 5.0f, 2.0f));
-	point->setColor(vec3(1.0f));
-	m_PointLights.push_back(point);
-	m_Entities.push_back(point);
+	for (int i = 0; i < 5; i++) {
+		PointLightEntity* point = new PointLightEntity();
+		point->Init();
+		point->setPosition(light_positions[i]);
+		point->setColor(vec3(1.0f));
+		m_PointLights.push_back(point);
+		m_Entities.push_back(point);
+	}
+
 }
 
 void TestScene::Update()
@@ -115,7 +126,7 @@ void TestScene::Update()
 			m_CameraYaw += xoffset;
 			m_CameraPitch += yoffset;
 
-			if (m_CameraYaw > 89.0f) m_CameraYaw = 89.0f;
+			if (m_CameraPitch > 89.0f) m_CameraPitch = 89.0f;
 			if (m_CameraPitch < -89.0f) m_CameraPitch = -89.0f;
 
 			m_SceneCamera->setRotation(vec3(m_CameraYaw, m_CameraPitch, 0.0f));

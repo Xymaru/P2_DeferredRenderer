@@ -25,6 +25,15 @@ protected:
 	EM::Uniform* m_UProj;
 	EM::Uniform* m_UView;
 	EM::Uniform* m_UModel;
+
+	EM::Uniform* m_Albedo;
+	EM::Uniform* m_Normals;
+	EM::Uniform* m_Position;
+
+	EM::PointLightUniform m_PointLightsUniforms[16];
+	EM::Uniform* m_PointLightCountUniform;
+
+	EM::Uniform* m_CameraPosition;
 public:
 	Scene();
 	~Scene();
@@ -38,5 +47,5 @@ public:
 	u32 getAlbedoTexture() { return m_SceneFrameBuffer.getColorAttachment(0); }
 	u32 getNormalsTexture() { return m_SceneFrameBuffer.getColorAttachment(1); }
 	u32 getPositionTexture() { return m_SceneFrameBuffer.getColorAttachment(2); }
-	u32 getDepthTexture() { return m_SceneFrameBuffer.getDepthAttachment(); }
+	u32 getDepthTexture() { return m_SceneFrameBuffer.getColorAttachment(3); }
 };

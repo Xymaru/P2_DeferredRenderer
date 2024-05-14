@@ -100,7 +100,7 @@ void SphereEntity::Init()
 	m_ModelUniform = m_ColorShader->getUniform("u_Model");
 }
 
-void SphereEntity::Render(Camera* camera, const std::vector<Entity*>& point_lights)
+void SphereEntity::Render(Camera* camera)
 {
 	m_ColorShader->Bind();
 

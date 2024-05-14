@@ -83,6 +83,7 @@ bool Window::Init()
 	glDebugMessageCallback(&Window::RendererDebugCallback, NULL);
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	glClearColor(.1f, .1f, .1f, 1.0f);
 

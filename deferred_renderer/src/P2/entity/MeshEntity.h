@@ -14,13 +14,10 @@ private:
 	EM::Uniform* m_ProjectionUniform;
 	EM::Uniform* m_ViewUniform;
 	EM::Uniform* m_ModelUniform;
-
-	EM::PointLightUniform m_PointLights[16];
-	EM::Uniform* m_PointLightCount;
 public:
 	MeshEntity();
 	~MeshEntity();
 
 	void Init() override;
-	void Render(Camera* camera, const std::vector<Entity*>& point_lights) override;
+	void Render(Camera* camera) override;
 };

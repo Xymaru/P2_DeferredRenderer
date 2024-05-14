@@ -24,5 +24,5 @@ public:
 	void setScale(vec3 scale);
 
 	virtual void Init(){}
-	virtual void Render(Camera* camera, const std::vector<Entity*>& point_lights){}
+	virtual void Render(Camera* camera){}
 };

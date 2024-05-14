@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include "../entity/PointLightEntity.h"
+
 Scene::Scene()
 {
 }
@@ -31,6 +33,7 @@ void Scene::Init()
 	m_SceneFrameBuffer.Init(resolution.x, resolution.y);
 	m_SceneFrameBuffer.AddColorAttachment(); // For normals
 	m_SceneFrameBuffer.AddColorAttachment(); // For position
+	m_SceneFrameBuffer.AddColorAttachment(); // For depth
 
 	ResourceId screen_shader_id = EM::Resources::Load<EM::Shader>("assets/shaders/screen_shader.glsl");
 	m_ScreenShader = EM::Resources::GetResourceById<EM::Shader>(screen_shader_id);
@@ -49,6 +52,22 @@ void Scene::Init()
 	m_Model = glm::mat4(1.0f);
 	m_Model = glm::translate(m_Model, glm::vec3(resolution.x / 2.0f, resolution.y / 2.0f, 0.0f));
 	m_Model = glm::scale(m_Model, glm::vec3((float)resolution.x, (float)resolution.y, 1.0f));
+
+	// Camera uniform
+	m_CameraPosition = m_ScreenShader->getUniform("u_CameraPos");
+
+	// Light uniforms
+	for (int i = 0; i < 16; i++) {
+		m_PointLightsUniforms[i].pos = m_ScreenShader->getUniform(EM_FMT("u_PointLights[{}].position", i).c_str());
+		m_PointLightsUniforms[i].color = m_ScreenShader->getUniform(EM_FMT("u_PointLights[{}].color", i).c_str());
+	}
+
+	m_PointLightCountUniform = m_ScreenShader->getUniform("u_PointLightCount");
+
+	// Texture uniforms
+	m_Albedo = m_ScreenShader->getUniform("u_Albedo");
+	m_Normals = m_ScreenShader->getUniform("u_Normals");
+	m_Position = m_ScreenShader->getUniform("u_Positions");
 
 	//----- Generate vao -----
 	// Quad vertices
@@ -89,29 +108,62 @@ void Scene::Init()
 
 void Scene::Render()
 {
+	//----------- Render scene -------------------
 	m_SceneFrameBuffer.Bind();
 
 	size_t e_size = m_Entities.size();
 
 	for (int i = 0; i < e_size; i++) {
-		m_Entities[i]->Render(m_SceneCamera, m_PointLights);
+		m_Entities[i]->Render(m_SceneCamera);
 	}
 
 	m_SceneFrameBuffer.Unbind();
 	
-	// Render to main window
+	//------------ Render to screen --------------
+	glDepthMask(GL_FALSE);
+
 	m_ScreenShader->Bind();
-	glBindVertexArray(m_ScreenVAO);
+	
+	glUniform3fv(m_CameraPosition->location, 1, glm::value_ptr(m_SceneCamera->getPosition()));
+
+	glUniform1i(m_Albedo->location, 0);
+	glUniform1i(m_Normals->location, 1);
+	glUniform1i(m_Position->location, 2);
 
 	glUniformMatrix4fv(m_UProj->location, 1, GL_FALSE, glm::value_ptr(m_OrthoProj));
 	glUniformMatrix4fv(m_UView->location, 1, GL_FALSE, glm::value_ptr(m_View));
 	glUniformMatrix4fv(m_UModel->location, 1, GL_FALSE, glm::value_ptr(m_Model));
 
+	// Bind lights
+	u32 light_count = m_PointLights.size();
+
+	glUniform1ui(m_PointLightCountUniform->location, light_count);
+
+	for (u32 i = 0; i < light_count; i++) {
+		EM::PointLightUniform& point_uniform = m_PointLightsUniforms[i];
+		PointLightEntity* point_light = (PointLightEntity*)m_PointLights[i];
+
+		glUniform3fv(point_uniform.pos->location, 1, glm::value_ptr(point_light->getPosition()));
+		glUniform3fv(point_uniform.color->location, 1, glm::value_ptr(point_light->getColor()));
+	}
+
+	// Bind textures
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_SceneFrameBuffer.getColorAttachment(0));
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_SceneFrameBuffer.getColorAttachment(1));
 
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_SceneFrameBuffer.getColorAttachment(2));
+
+	glBindVertexArray(m_ScreenVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
 	m_ScreenShader->Unbind();
+
+	glDepthMask(GL_TRUE);
+
+	glActiveTexture(GL_TEXTURE0);
 }

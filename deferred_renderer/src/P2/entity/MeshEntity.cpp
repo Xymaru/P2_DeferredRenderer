@@ -32,32 +32,11 @@ void MeshEntity::Init()
 	m_ProjectionUniform = m_TextureShader->getUniform("u_Projection");
 	m_ViewUniform = m_TextureShader->getUniform("u_View");
 	m_ModelUniform = m_TextureShader->getUniform("u_Model");
-
-	for (int i = 0; i < 16; i++) {
-		m_PointLights[i].pos = m_TextureShader->getUniform(EM_FMT("u_PointLights[{}].position", i).c_str());
-		m_PointLights[i].color = m_TextureShader->getUniform(EM_FMT("u_PointLights[{}].color", i).c_str());
-	}
-
-	m_PointLightCount = m_TextureShader->getUniform("u_PointLightCount");
 }
 
-void MeshEntity::Render(Camera* camera, const std::vector<Entity*>& point_lights)
+void MeshEntity::Render(Camera* camera)
 {
 	m_TextureShader->Bind();
-
-	// Set lights
-	u32 p_lights = (u32)point_lights.size();
-
-	glUniform1ui(m_PointLightCount->location, p_lights);
-
-	PointLightEntity* point_light = nullptr;
-
-	for (u32 i = 0; i < p_lights; i++) {
-		point_light = (PointLightEntity*)point_lights[i];
-
-		glUniform3fv(m_PointLights[i].pos->location, 1, glm::value_ptr(point_light->getPosition()));
-		glUniform3fv(m_PointLights[i].color->location, 1, glm::value_ptr(point_light->getColor()));
-	}
 
 	// Set MVP
 	glUniformMatrix4fv(m_ProjectionUniform->location, 1, GL_FALSE, glm::value_ptr(camera->getProjection()));
