@@ -21,7 +21,7 @@ namespace EM {
 		u32 location;
 	};
 
-	struct PointLightUniform {
+	struct LightUniform {
 		Uniform* pos;
 		Uniform* color;
 	};

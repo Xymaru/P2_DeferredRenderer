@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 
 #include "../entity/PointLightEntity.h"
+#include "../entity/DirectionalLightEntity.h"
 
 Scene::Scene()
 {
@@ -31,9 +32,9 @@ void Scene::Init()
 	m_SceneCamera->SetPerspective(45.0f, resolution.x, resolution.y);
 
 	m_SceneFrameBuffer.Init(resolution.x, resolution.y);
-	m_SceneFrameBuffer.AddColorAttachment(); // For normals
-	m_SceneFrameBuffer.AddColorAttachment(); // For position
-	m_SceneFrameBuffer.AddColorAttachment(); // For depth
+	m_SceneFrameBuffer.AddColorAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); // For normals
+	m_SceneFrameBuffer.AddColorAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); // For position
+	m_SceneFrameBuffer.AddColorAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); // For depth
 
 	ResourceId screen_shader_id = EM::Resources::Load<EM::Shader>("assets/shaders/screen_shader.glsl");
 	m_ScreenShader = EM::Resources::GetResourceById<EM::Shader>(screen_shader_id);
@@ -56,13 +57,21 @@ void Scene::Init()
 	// Camera uniform
 	m_CameraPosition = m_ScreenShader->getUniform("u_CameraPos");
 
-	// Light uniforms
+	// Point light uniforms
+	m_PointLightCountUniform = m_ScreenShader->getUniform("u_PointLightCount");
+
 	for (int i = 0; i < 16; i++) {
 		m_PointLightsUniforms[i].pos = m_ScreenShader->getUniform(EM_FMT("u_PointLights[{}].position", i).c_str());
 		m_PointLightsUniforms[i].color = m_ScreenShader->getUniform(EM_FMT("u_PointLights[{}].color", i).c_str());
 	}
 
-	m_PointLightCountUniform = m_ScreenShader->getUniform("u_PointLightCount");
+	// Directional light uniforms
+	m_DirectionalLightCountUniform = m_ScreenShader->getUniform("u_DirectionalLightCount");
+
+	for (int i = 0; i < 16; i++) {
+		m_DirectionalLightsUniforms[i].pos = m_ScreenShader->getUniform(EM_FMT("u_DirectionalLights[{}].direction", i).c_str());
+		m_DirectionalLightsUniforms[i].color = m_ScreenShader->getUniform(EM_FMT("u_DirectionalLights[{}].color", i).c_str());
+	}
 
 	// Texture uniforms
 	m_Albedo = m_ScreenShader->getUniform("u_Albedo");
@@ -124,27 +133,42 @@ void Scene::Render()
 
 	m_ScreenShader->Bind();
 	
-	glUniform3fv(m_CameraPosition->location, 1, glm::value_ptr(m_SceneCamera->getPosition()));
+	if (m_CameraPosition) {
+		glUniform3fv(m_CameraPosition->location, 1, glm::value_ptr(m_SceneCamera->getPosition()));
+	}
 
-	glUniform1i(m_Albedo->location, 0);
-	glUniform1i(m_Normals->location, 1);
-	glUniform1i(m_Position->location, 2);
+	if(m_Albedo) glUniform1i(m_Albedo->location, 0);
+	if(m_Normals) glUniform1i(m_Normals->location, 1);
+	if(m_Position) glUniform1i(m_Position->location, 2);
 
 	glUniformMatrix4fv(m_UProj->location, 1, GL_FALSE, glm::value_ptr(m_OrthoProj));
 	glUniformMatrix4fv(m_UView->location, 1, GL_FALSE, glm::value_ptr(m_View));
 	glUniformMatrix4fv(m_UModel->location, 1, GL_FALSE, glm::value_ptr(m_Model));
 
-	// Bind lights
-	u32 light_count = m_PointLights.size();
+	// Bind point lights
+	u32 p_light_count = m_PointLights.size();
 
-	glUniform1ui(m_PointLightCountUniform->location, light_count);
+	if(m_PointLightCountUniform) glUniform1ui(m_PointLightCountUniform->location, p_light_count);
 
-	for (u32 i = 0; i < light_count; i++) {
-		EM::PointLightUniform& point_uniform = m_PointLightsUniforms[i];
+	for (u32 i = 0; i < p_light_count; i++) {
+		EM::LightUniform& point_uniform = m_PointLightsUniforms[i];
 		PointLightEntity* point_light = (PointLightEntity*)m_PointLights[i];
 
-		glUniform3fv(point_uniform.pos->location, 1, glm::value_ptr(point_light->getPosition()));
-		glUniform3fv(point_uniform.color->location, 1, glm::value_ptr(point_light->getColor()));
+		if(point_uniform.pos) glUniform3fv(point_uniform.pos->location, 1, glm::value_ptr(point_light->getPosition()));
+		if(point_uniform.color) glUniform3fv(point_uniform.color->location, 1, glm::value_ptr(point_light->getColor()));
+	}
+
+	// Bind directional lights
+	u32 d_light_count = m_DirectionalLights.size();
+
+	if(m_DirectionalLightCountUniform) glUniform1ui(m_DirectionalLightCountUniform->location, d_light_count);
+
+	for (u32 i = 0; i < d_light_count; i++) {
+		EM::LightUniform& dir_uniform = m_DirectionalLightsUniforms[i];
+		DirectionalLightEntity* dir_light = (DirectionalLightEntity*)m_DirectionalLights[i];
+
+		if(dir_uniform.pos) glUniform3fv(dir_uniform.pos->location, 1, glm::value_ptr(dir_light->getDirection()));
+		if(dir_uniform.color) glUniform3fv(dir_uniform.color->location, 1, glm::value_ptr(dir_light->getColor()));
 	}
 
 	// Bind textures

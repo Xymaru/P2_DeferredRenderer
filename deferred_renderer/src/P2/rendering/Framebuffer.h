@@ -19,7 +19,7 @@ private:
 public:
 	virtual void Init(int width, int height);
 
-	void AddColorAttachment();
+	void AddColorAttachment(int internal_format, int format, int size);
 
 	size_t getColorAttachmentCount() { return m_ColorAttachments.size(); }
 	u32* getColorAttachments() { return m_ColorAttachments.data(); }

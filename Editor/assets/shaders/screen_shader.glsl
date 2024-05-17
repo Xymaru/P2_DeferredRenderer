@@ -8,7 +8,6 @@ struct DirectionalLight
 {
 	vec3 color;
 	vec3 direction;
-	vec3 position;
 };
 
 #if defined(VERTEX_SHADER)
@@ -44,53 +43,82 @@ uniform sampler2D u_Albedo;
 uniform sampler2D u_Normals;
 uniform sampler2D u_Positions;
 
-vec3 calc_point_light(in PointLight light, in vec4 color, in vec3 normals, in vec3 position, in vec3 view_dir){
-	float linear = 0.7;
-	float quadratic = 1.8;
-	float light_max = max(max(light.color.r, light.color.g), light.color.b);
-	float radius = (-linear + sqrt(linear * linear - 4.0 * quadratic * (1.0 - (256.0 / 5.0) * light_max))) / (2.0 * quadratic);
-	
-	float intensity = 2.0;
+vec3 calc_point_light(in PointLight light, in vec4 color, in vec3 normals, in vec3 position, in vec3 view_dir) {
+    float linear = 0.7;
+    float quadratic = 1.8;
+    float light_max = max(max(light.color.r, light.color.g), light.color.b);
+    float radius = (-linear + sqrt(linear * linear - 4.0 * quadratic * (1.0 - (256.0 / 5.0) * light_max))) / (2.0 * quadratic);
 
-	float d = length(light.position - position);
+    float d = length(light.position - position);
 
-	// Return black if distance is higher than light radius
-	if(d > radius) return vec3(0.0);
+    if (d > radius) return vec3(0.0);
 
-	// Diffuse
-	vec3 light_dir = normalize(light.position - position);
-	float diffuse = max(dot(normals, light_dir), 0.0);
-	vec3 diffuse_color = diffuse * color.rgb * light.color;
+    vec3 norm = normalize(normals);
 
-	// Specular
-	vec3 hwd = normalize(light_dir + view_dir);
-	float specular = pow(max(dot(normals, hwd), 0.0), 16.0);
-	vec3 specular_color = specular * color.a * light.color;
+    float intensity = 1.0;
 
-	// Attenuation
-	float attenuation = 1.0 / (1.0 + linear * d + quadratic * d * d);
+    // Ambient
+    float ambient = 0.1;
+    vec3 ambient_color = ambient * color.rgb * light.color;
 
-	return (diffuse_color + specular_color) * attenuation * intensity;
+    // Diffuse
+    vec3 light_dir = normalize(light.position - position);
+    float diffuse = max(dot(norm, light_dir), 0.0);
+    vec3 diffuse_color = diffuse * color.rgb * light.color;
+
+    // Specular
+    float spec_power = 32.0;
+    vec3 hwd = normalize(light_dir + view_dir);
+    float specular = pow(max(dot(norm, hwd), 0.0), spec_power);
+    vec3 specular_color = specular * color.a * light.color;
+
+    return (ambient_color + diffuse_color + specular_color) * intensity;
 }
 
-void main(){
-	vec2 flipped_uv = v_TexCoord;
-	flipped_uv.y = 1.0 - flipped_uv.y;
+vec3 calc_directional_light(in DirectionalLight light, in vec4 color, in vec3 normals, in vec3 view_dir) {
+    vec3 norm = normalize(normals);
 
-	vec4 obj_color = texture(u_Albedo, flipped_uv);
-	vec3 obj_normals = texture(u_Normals, flipped_uv).rgb;
-	vec3 obj_pos = texture(u_Positions, flipped_uv).rgb;
+    vec3 light_dir = normalize(light.direction);
 
-	vec3 view_dir = normalize(u_CameraPos - obj_pos);
+    float intensity = 0.1;
 
-	// Base ambient color
-	float ambient = 0.1;
-	vec3 total_light = obj_color.rgb * ambient;
+    // Ambient
+    float ambient = 0.1;
+    vec3 ambient_color = ambient * color.rgb * light.color;
 
-	for(int i=0;i<u_PointLightCount;i++){
-		total_light += calc_point_light(u_PointLights[i], obj_color, obj_normals, obj_pos, view_dir);
-	}
+    // Diffuse
+    float diffuse = max(dot(norm, light_dir), 0.0);
+    vec3 diffuse_color = diffuse * color.rgb * light.color;
 
-	o_Color = vec4(total_light, 1.0);
+    return (ambient_color + diffuse_color) * intensity;
 }
+
+void main() {
+    vec2 flipped_uv = v_TexCoord;
+    flipped_uv.y = 1.0 - flipped_uv.y;
+
+    vec4 obj_color = texture(u_Albedo, flipped_uv);
+    vec3 obj_normals = normalize(texture(u_Normals, flipped_uv).rgb);
+    vec3 obj_pos = texture(u_Positions, flipped_uv).rgb;
+
+    vec3 view_dir = normalize(u_CameraPos - obj_pos);
+
+    // Base ambient color
+    vec3 total_light = obj_color.rgb * 0.1;
+
+    // Point lights
+    for (int i = 0; i < u_PointLightCount; i++) {
+        total_light += calc_point_light(u_PointLights[i], obj_color, obj_normals, obj_pos, view_dir);
+    }
+
+    // Directional lights
+    for (int i = 0; i < u_DirectionalLightCount; i++) {
+        total_light += calc_directional_light(u_DirectionalLights[i], obj_color, obj_normals, view_dir);
+    }
+
+    vec3 final_color = total_light;
+
+    o_Color = vec4(final_color, 1.0);
+}
+
 #endif

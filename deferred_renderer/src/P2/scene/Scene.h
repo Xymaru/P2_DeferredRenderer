@@ -10,6 +10,7 @@ class Scene {
 protected:
 	std::vector<Entity*> m_Entities;
 	std::vector<Entity*> m_PointLights;
+	std::vector<Entity*> m_DirectionalLights;
 
 	Camera* m_SceneCamera;
 
@@ -30,8 +31,11 @@ protected:
 	EM::Uniform* m_Normals;
 	EM::Uniform* m_Position;
 
-	EM::PointLightUniform m_PointLightsUniforms[16];
+	EM::LightUniform m_PointLightsUniforms[16];
 	EM::Uniform* m_PointLightCountUniform;
+
+	EM::LightUniform m_DirectionalLightsUniforms[16];
+	EM::Uniform* m_DirectionalLightCountUniform;
 
 	EM::Uniform* m_CameraPosition;
 public:

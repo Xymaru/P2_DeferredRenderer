@@ -23,6 +23,8 @@ public:
 	void setRotation(vec3 rotation);
 	void setScale(vec3 scale);
 
+	vec3 getPosition() { return m_Position; }
+
 	virtual void Init(){}
 	virtual void Render(Camera* camera){}
 };

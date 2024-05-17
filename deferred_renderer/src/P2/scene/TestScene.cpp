@@ -2,7 +2,9 @@
 
 #include "../entity/MeshEntity.h"
 #include "../entity/SphereEntity.h"
+
 #include "../entity/PointLightEntity.h"
+#include "../entity/DirectionalLightEntity.h"
 
 #include <P2/Input.h>
 
@@ -57,7 +59,7 @@ void TestScene::Init()
 		vec3(10.0f, 0.0f, -8.0f),
 	};
 
-	//------- Lights -------
+	//------- Point lights -------
 	for (int i = 0; i < 5; i++) {
 		PointLightEntity* point = new PointLightEntity();
 		point->Init();
@@ -67,6 +69,22 @@ void TestScene::Init()
 		m_Entities.push_back(point);
 	}
 
+	vec3 light_directions[3] = {
+		vec3(0.0f),
+		vec3(1.0f),
+		vec3(2.0f)
+	};
+
+	//------- Directional lights -------
+	for (int i = 0; i < 3; i++) {
+		DirectionalLightEntity* directional = new DirectionalLightEntity();
+		directional->Init();
+		directional->setPosition(vec3(8.0f));
+		directional->setDirection(light_directions[i]);
+		directional->setColor(vec3(1.0f));
+		m_DirectionalLights.push_back(directional);
+		m_Entities.push_back(directional);
+	}
 }
 
 void TestScene::Update()

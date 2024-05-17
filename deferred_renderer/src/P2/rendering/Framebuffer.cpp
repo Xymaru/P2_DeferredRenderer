@@ -30,7 +30,7 @@ void Framebuffer::Init(int width, int height)
 	glGenFramebuffers(1, &m_FBO);
 
 	// Base color attachment
-	AddColorAttachment();
+	AddColorAttachment(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 
 	// Depth attachment
 	glGenTextures(1, &m_DepthAttachment);
@@ -49,7 +49,7 @@ void Framebuffer::Init(int width, int height)
 	checkStatus();
 }
 
-void Framebuffer::AddColorAttachment()
+void Framebuffer::AddColorAttachment(int internal_format, int format, int size)
 {
 	u32 color_attachment;
 	glGenTextures(1, &color_attachment);

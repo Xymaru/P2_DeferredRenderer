@@ -102,6 +102,7 @@ void SphereEntity::Init()
 
 void SphereEntity::Render(Camera* camera)
 {
+	return;
 	m_ColorShader->Bind();
 
 	// Set MVP
